@@ -1,7 +1,5 @@
 package com.psyala.util;
 
-import com.psyala.db.SQLiteConnection;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -12,14 +10,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ResourceLoader {
     //Folders
     private static final String RSRC_FOLDER_DEFAULT = "default";
     private static final String RSRC_FOLDER_DEFAULT_PROFILE = RSRC_FOLDER_DEFAULT + "/profile";
     private static final String RSRC_FOLDER_SIMULATIONS = "simulations";
-    private static final String RSRC_FOLDER_DB = "db";
 
     //Specs
     public static final String RSRC_DEFAULT_PROFILE_AFFLICTION = RSRC_FOLDER_DEFAULT_PROFILE + "/affliction.simc";
@@ -29,22 +25,8 @@ public class ResourceLoader {
     //Defaults
     public static final String RSRC_DEFAULT_OPTIONS = RSRC_FOLDER_DEFAULT + "/options.simc";
 
-    //DB
-    public static final String RSRC_DB_RESULTS = RSRC_FOLDER_DB + "/results.db";
-
     private static Optional<URL> getRawResource(String resourcePath) {
         return Optional.ofNullable(ResourceLoader.class.getClassLoader().getResource(resourcePath));
-    }
-
-    public static Optional<SQLiteConnection> initSQLiteConnection(String dbPath) {
-        AtomicReference<SQLiteConnection> sqLiteConnection = new AtomicReference<>(null);
-
-        getRawResource(dbPath).ifPresent(url -> {
-            String filePath = url.getFile().substring(1);
-            sqLiteConnection.set(new SQLiteConnection(filePath));
-        });
-
-        return Optional.ofNullable(sqLiteConnection.get());
     }
 
     private static List<String> getFileContentsList(String resourcePath) {

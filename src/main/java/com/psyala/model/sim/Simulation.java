@@ -23,6 +23,7 @@ public class Simulation {
         return name;
     }
 
+    //TODO - Get file bodies
     public String getSimulationBody() {
         return simOptions + "\r\n\r\n" + simBase + "\r\n\r\n" + simVariants;
     }

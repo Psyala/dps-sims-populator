@@ -1,5 +1,6 @@
 package com.psyala;
 
+import com.psyala.controller.ConfigurationController;
 import com.psyala.controller.SimulationController;
 import com.psyala.model.sim.Simulation;
 import com.psyala.model.sim.SimulationResult;
@@ -18,23 +19,35 @@ public class Main {
     public static void main(String[] args) {
         try {
             System.out.println("Starting...");
-            SimulationController simulationController = new SimulationController();
+            ConfigurationController configurationController;
+            try {
+                configurationController = new ConfigurationController();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.out.println("Could not init configuration ... exiting");
+                return;
+            }
+            SimulationController simulationController = new SimulationController(configurationController);
 
             //Get MetaData
             Date start = new Date();
-            String simcVersion = "1.2.3";
             System.out.println("Run Time: " + start.toInstant().toString());
-            System.out.println("SimC Version: " + simcVersion);
+            Optional<String> simcVersionInfo = simulationController.getSimulationCraftController().getSimcVersionInfo();
+            {
+                if (simcVersionInfo.isPresent()) {
+                    System.out.println("SimC Version Info: " + simcVersionInfo.get());
+                } else {
+                    System.err.println("Could not get SimC Version Info");
+                    return;
+                }
+            }
 
             //Get sims
-            List<Pair<String, Future<SimulationResult>>> simulationResults = getSims()
-                    .map(simulationController::getSimulationResult)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+            List<Pair<String, Future<Optional<SimulationResult>>>> simulationResults = getSims()
+                    .map(simulationController::performSim)
                     .collect(Collectors.toList());
 
             //Await for all sims to finish running
-            //TODO: Look at CompletableFuture: https://stackoverflow.com/questions/19348248/waiting-on-a-list-of-future
             while (simulationResults.stream().anyMatch(stringFuturePair -> !stringFuturePair.getValue().isDone())) {
                 System.out.println("Waiting for simulations to complete...");
                 System.out.println(getSimulationStatus(simulationResults));
@@ -42,6 +55,8 @@ public class Main {
             }
             System.out.println("Simulations Finished");
             System.out.println(getSimulationStatus(simulationResults));
+
+            //TODO: Report any sims which didn't produce a valid result
 
             simulationController.shutDown();
             System.out.println("Done");
@@ -58,7 +73,7 @@ public class Main {
         );
     }
 
-    private static String getSimulationStatus(List<Pair<String, Future<SimulationResult>>> simulationResults) {
+    private static String getSimulationStatus(List<Pair<String, Future<Optional<SimulationResult>>>> simulationResults) {
         return simulationResults.stream()
                 .map(stringFuturePair -> stringFuturePair.getKey() + ": " + (stringFuturePair.getValue().isDone() ? "Complete" : "In Progress"))
                 .collect(Collectors.joining("\r\n"));
