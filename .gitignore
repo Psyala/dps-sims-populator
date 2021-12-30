@@ -23,4 +23,7 @@
 hs_err_pid*
 
 #dirs
-/target
+/target/
+/.idea/libraries/
+/.idea/shelf/
+/.idea/workspace.xml
