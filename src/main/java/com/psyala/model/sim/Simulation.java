@@ -2,29 +2,39 @@ package com.psyala.model.sim;
 
 import com.psyala.util.ResourceLoader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Simulation {
     private final String name;
-    private final String simBase;
-    private final String simVariants;
-    private final String simOptions;
+    private final String specFolder;
+    private final String simVariant;
+    private final String fightOptions;
 
-    public Simulation(String name, String simBase, String simVariants) {
-        this(name, simBase, simVariants, ResourceLoader.RSRC_DEFAULT_OPTIONS);
-    }
-
-    private Simulation(String name, String simBase, String simVariants, String simOptions) {
+    public Simulation(String name, String specFolder, String simVariant, String fightOptions) {
         this.name = name;
-        this.simBase = simBase;
-        this.simVariants = simVariants;
-        this.simOptions = simOptions;
+        this.specFolder = specFolder;
+        this.simVariant = simVariant;
+        this.fightOptions = fightOptions;
     }
 
     public String getName() {
         return name;
     }
 
-    //TODO - Get file bodies
     public String getSimulationBody() {
-        return simOptions + "\r\n\r\n" + simBase + "\r\n\r\n" + simVariants;
+        List<String> simBuilderList = new ArrayList<>();
+
+        //Fight Options
+        simBuilderList.add(ResourceLoader.getFileContentsString(fightOptions));
+
+        //Base Profile
+        simBuilderList.add(ResourceLoader.getFileContentsString(specFolder.concat("/").concat(ResourceLoader.BASE_PROFILE)));
+
+        //Simulation Variant
+        if (!simVariant.isEmpty())
+            simBuilderList.add(ResourceLoader.getFileContentsString(specFolder.concat("/").concat(simVariant)));
+
+        return String.join("\r\n\r\n", simBuilderList);
     }
 }

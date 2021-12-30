@@ -6,6 +6,7 @@ race="orc"
 role="spell"
 position="back"
 talents="3302023"
+potion="spectral_intellect"
 
 # Equipped Gear
 head=hood_of_vengeful_possession,id=186287,bonus_id=1498/7187/6935,gem_id=173130/187312

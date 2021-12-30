@@ -1,5 +1,8 @@
 package com.psyala.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -12,18 +15,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class ResourceLoader {
-    //Folders
-    private static final String RSRC_FOLDER_DEFAULT = "default";
-    private static final String RSRC_FOLDER_DEFAULT_PROFILE = RSRC_FOLDER_DEFAULT + "/profile";
-    private static final String RSRC_FOLDER_SIMULATIONS = "simulations";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceLoader.class);
 
-    //Specs
-    public static final String RSRC_DEFAULT_PROFILE_AFFLICTION = RSRC_FOLDER_DEFAULT_PROFILE + "/affliction.simc";
-    public static final String RSRC_DEFAULT_PROFILE_DESTRUCTION = RSRC_FOLDER_DEFAULT_PROFILE + "/destruction.simc";
-    public static final String RSRC_DEFAULT_PROFILE_DEMONOLOGY = RSRC_FOLDER_DEFAULT_PROFILE + "/demonology.simc";
+    //Base Folders
+    private static final String FOLDER_FIGHT_OPTIONS = "fight_options";
+    private static final String FOLDER_SPEC = "spec";
 
-    //Defaults
-    public static final String RSRC_DEFAULT_OPTIONS = RSRC_FOLDER_DEFAULT + "/options.simc";
+    //Spec Folders
+    public static final String SPEC_WL_AFFLICTION = FOLDER_SPEC + "/wl_affliction";
+    public static final String SPEC_WL_DESTRUCTION = FOLDER_SPEC + "/wl_destruction";
+    public static final String SPEC_WL_DEMONOLOGY = FOLDER_SPEC + "/wl_demonology";
+
+    //Fight Options
+    public static final String FIGHT_OPTIONS_ST = FOLDER_FIGHT_OPTIONS + "/st.simc";
+
+    //Simulations
+    public static final String BASE_PROFILE = "base.simc";
 
     private static Optional<URL> getRawResource(String resourcePath) {
         return Optional.ofNullable(ResourceLoader.class.getClassLoader().getResource(resourcePath));
@@ -37,7 +44,7 @@ public class ResourceLoader {
                 Path path = Paths.get(url.toURI());
                 lines.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
             } catch (URISyntaxException | IOException ex) {
-                ex.printStackTrace();
+                LOGGER.error("Could not load: " + url, ex);
             }
         });
 

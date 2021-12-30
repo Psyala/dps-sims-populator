@@ -1,22 +1,23 @@
 package com.psyala.controller;
 
+import com.psyala.model.ConcurrentTask;
 import com.psyala.model.sim.Simulation;
 import com.psyala.model.sim.SimulationResult;
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SimulationController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimulationController.class);
     private final ExecutorService simulationExecutor;
     private final SimulationCraftController simulationCraftController;
 
     public SimulationController(ConfigurationController configurationController) throws IOException {
-        simulationExecutor = Executors.newFixedThreadPool(configurationController.simcThreads);
+        simulationExecutor = Executors.newFixedThreadPool(configurationController.simcThreads, r -> new Thread(r, "Simulation Thread"));
         simulationCraftController = new SimulationCraftController(configurationController);
     }
 
@@ -31,20 +32,19 @@ public class SimulationController {
         return simulationCraftController;
     }
 
-    public Pair<String, Future<Optional<SimulationResult>>> performSim(Simulation simulation) {
-        return new Pair<>(
-                simulation.getName(),
-                simulationExecutor.submit(() -> {
-                    System.out.println("Starting Simulation: " + simulation.getName());
+    public Pair<String, ConcurrentTask> performSim(Simulation simulation) {
+        ConcurrentTask c = new ConcurrentTask(() -> convert(simulation.getName(), simulationCraftController.runSimulation(simulation)));
+        c.setFuture(simulationExecutor.submit(c));
 
-                    AtomicReference<SimulationResult> simResult = new AtomicReference<>(null);
-                    simulationCraftController.runSimulation(simulation).ifPresent(simcOutput -> {
-                        System.out.println(simulation.getName() + " output:\r\n" + simcOutput);
-                    });
-
-                    return Optional.ofNullable(simResult.get());
-                })
-        );
+        return new Pair<>(simulation.getName(), c);
     }
+
+    private SimulationResult convert(String simulationName, String rawSimOutput) {
+        if (rawSimOutput.isEmpty()) return null;
+
+        //TODO Convert rawSimOutput into SimulationResult POJO
+        return new SimulationResult(simulationName);
+    }
+
 
 }
