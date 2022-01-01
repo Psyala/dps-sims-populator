@@ -9,7 +9,6 @@
         <option value="missingOverrideAnnotation" />
         <option value="explicitTypeCanBeDiamond" />
         <option value="unnecessarySemicolon" />
-        <option value="accessCanBeTightened" />
       </set>
     </option>
     <option name="configurationPath" value="" />

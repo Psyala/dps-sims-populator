@@ -31,6 +31,7 @@ public class ResourceLoader {
 
     //Simulations
     public static final String BASE_PROFILE = "base.simc";
+    public static final String TALENT_COMPARISON = "talent_comparison.simc";
 
     private static Optional<URL> getRawResource(String resourcePath) {
         return Optional.ofNullable(ResourceLoader.class.getClassLoader().getResource(resourcePath));

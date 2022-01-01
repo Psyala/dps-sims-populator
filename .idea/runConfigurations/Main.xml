@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.psyala.Main" />
+    <option name="MAIN_CLASS_NAME" value="com.psyala.DpsSimPopulator" />
     <module name="dps-sims-populator" />
     <option name="PROGRAM_PARAMETERS" value="-Xms500M -Xmx1G" />
     <RunnerSettings RunnerId="Run" />

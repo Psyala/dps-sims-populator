@@ -2,12 +2,27 @@
 single_actor_batch="1"
 report_details="0"
 target_error="0.1"
-iterations="50000"
+iterations="500000"
 max_time="300"
 desired_targets="1"
-chart_show_relative_difference="1"
+ptr="0"
 
-# Default consumables
-flask="spectral_flask_of_power"
-food="feast_of_gluttonous_hedonism"
-augmentation="veiled"
+# Buffs
+override.bloodlust="1"
+override.arcane_intellect="1"
+override.power_word_fortitude="1"
+override.battle_shout="1"
+override.mystic_touch="1"
+override.chaos_brand="1"
+override.windfury_totem="1"
+override.bleeding="1"
+
+# Expansion Options
+shadowlands.soleahs_secret_technique_type="crit"
+shadowlands.titanic_ocular_gland_worthy_chance="1"
+shadowlands.enable_rune_words="1"
+shadowlands.stone_legionnaires_in_party="0"
+shadowlands.crimson_choir_in_party="0"
+shadowlands.disable_iqd_execute="0"
+shadowlands.iqd_stat_fail_chance="0"
+shadowlands.unbound_changeling_stat_type="haste"
